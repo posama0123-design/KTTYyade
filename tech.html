@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>技術情報 | 九州通信技術株式会社（KTTY）</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        header {
+            background: linear-gradient(135deg, #003366, #0055aa);
+            color: white;
+            padding: 30px 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        header p {
+            margin-top: 8px;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: #ffffff;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 20px;
+        }
+
+        nav a {
+            margin-right: 20px;
+            text-decoration: none;
+            color: #0055aa;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        section {
+            max-width: 1000px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+
+        h2 {
+            color: #003366;
+            border-left: 6px solid #0055aa;
+            padding-left: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        ul {
+            line-height: 1.8;
+        }
+
+        footer {
+            background: #002244;
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            font-size: 14px;
+        }
+
+        .small {
+            font-size: 13px;
+            opacity: 0.85;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>技術情報</h1>
+    <p>九州通信技術株式会社（KTTY）</p>
+</header>
+
+<nav>
+    <a href="index.html">トップ</a>
+    <a href="service.html">事業内容</a>
+    <a href="tech.html">技術情報</a>
+    <a href="company.html">会社概要</a>
+    <a href="contact.html">お問い合わせ</a>
+</nav>
+
+<section>
+    <h2>WebRTC 技術概要</h2>
+    <div class="card">
+        <p>
+            九州通信技術株式会社では、WebRTC（Web Real-Time Communication）を
+            中核技術として、リアルタイム音声通信サービスを提供しています。
+        </p>
+        <ul>
+            <li>ブラウザのみで動作する音声通信</li>
+            <li>専用アプリ不要</li>
+            <li>低遅延・双方向通信</li>
+        </ul>
+    </div>
+
+    <h2>通信アーキテクチャ</h2>
+    <div class="card">
+        <p>
+            通話開始時はシグナリングサーバーを経由し、
+            接続確立後は端末間で直接音声データを送受信します。
+        </p>
+        <ul>
+            <li>シグナリング：WebSocket</li>
+            <li>音声通信：Peer-to-Peer</li>
+            <li>暗号化：DTLS-SRTP</li>
+        </ul>
+    </div>
+
+    <h2>九州地域最適化設計</h2>
+    <div class="card">
+        <p>
+            KTTYでは九州地域内での利用を前提とした
+            ネットワーク最適化を行っています。
+        </p>
+        <ul>
+            <li>九州リージョン限定サーバー配置</li>
+            <li>低遅延ルーティング設計</li>
+            <li>地域内トラフィック優先制御（架空）</li>
+        </ul>
+    </div>
+
+    <h2>品質・信頼性への取り組み</h2>
+    <div class="card">
+        <p>
+            安定した音声品質を提供するため、
+            通信状態の監視と継続的な改善を行っています。
+        </p>
+        <ul>
+            <li>遅延・パケットロス監視</li>
+            <li>音声コーデック最適化</li>
+            <li>障害時の自動切替設計（架空）</li>
+        </ul>
+    </div>
+
+    <h2>セキュリティ対策</h2>
+    <div class="card">
+        <p>
+            利用者の安全を重視し、
+            通信の暗号化とアクセス制御を徹底しています。
+        </p>
+        <ul>
+            <li>通信データの完全暗号化</li>
+            <li>不正接続の検知・遮断</li>
+            <li>定期的な技術検証（架空）</li>
+        </ul>
+    </div>
+</section>
+
+<footer>
+    <p>© 九州通信技術株式会社 / KTTY</p>
+    <p class="small">本ページは架空の企業設定に基づいて作成されています。</p>
+</footer>
+
+</body>
+</html>

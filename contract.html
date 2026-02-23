@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ご契約方法 | 九州通信技術株式会社</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+}
+section {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+}
+button {
+    margin-top: 20px;
+    padding: 12px 24px;
+    background: #0055aa;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+button:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+</style>
+</head>
+
+<body>
+
+<section>
+    <h2>ご契約手続き（九州地域限定）</h2>
+
+    <p>
+        本サービスは九州地域限定です。<br>
+        九州内に所在することが確認できる書類をご用意ください。
+    </p>
+
+    <h3>提出書類（例）</h3>
+    <ul>
+        <li>公共料金の請求書</li>
+        <li>住民票記載事項証明書</li>
+        <li>登記簿謄本（法人）</li>
+    </ul>
+
+    <p>
+        <input type="file" id="doc">
+    </p>
+
+    <p>
+        <label>
+            <input type="checkbox" id="agree">
+            私は九州内に所在していることを確認しました
+        </label>
+    </p>
+
+    <button id="nextBtn" disabled>
+        WebRTC契約ページへ進む
+    </button>
+</section>
+
+<script>
+const doc = document.getElementById("doc");
+const agree = document.getElementById("agree");
+const nextBtn = document.getElementById("nextBtn");
+
+function checkReady() {
+    if (doc.files.length > 0 && agree.checked) {
+        nextBtn.disabled = false;
+    } else {
+        nextBtn.disabled = true;
+    }
+}
+
+doc.addEventListener("change", checkReady);
+agree.addEventListener("change", checkReady);
+
+nextBtn.addEventListener("click", () => {
+    location.href = "webrtc.html";
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>九州通信技術株式会社 | KTTY</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        header {
+            background: linear-gradient(135deg, #003366, #0055aa);
+            color: white;
+            padding: 30px 20px;
+        }
+
+        /* ===== ロゴ＋タイトル（KDDI風） ===== */
+        .header-inner {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 32px;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            margin-top: 8px;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: #ffffff;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 20px;
+        }
+
+        nav a {
+            margin-right: 20px;
+            text-decoration: none;
+            color: #0055aa;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        section {
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h2 {
+            color: #003366;
+            border-left: 6px solid #0055aa;
+            padding-left: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        footer {
+            background: #002244;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .small {
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        /* スマホ微調整 */
+        @media (max-width: 600px) {
+            .logo {
+                width: 90px;
+                margin-right: 14px;
+            }
+            header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <img src="KTTY_transparent_transparent.png" alt="KTTY ロゴ" class="logo">
+        <div>
+            <h1>九州通信技術株式会社</h1>
+            <p>Kyushu Telecommunications TechnologY（KTTY）</p>
+        </div>
+    </div>
+</header>
+
+<nav>
+    <a href="index.html">トップ</a>
+    <a href="service.html">事業内容</a>
+    <a href="tech.html">技術情報</a>
+    <a href="company.html">会社概要</a>
+    <a href="contact.html">お問い合わせ</a>
+</nav>
+
+<section>
+    <h2>ご挨拶</h2>
+    <div class="card">
+        <p>
+            九州通信技術株式会社は、九州地域に特化した通信技術企業として、
+            WebRTCを中心としたリアルタイム音声通信サービスを提供しています。
+        </p>
+        <p>
+            地域に根ざした通信インフラの構築を通じて、
+            人と人、企業と社会をより自然につなぐことを目指しています。
+        </p>
+    </div>
+
+    <h2>主な事業</h2>
+    <div class="card">
+        <ul>
+            <li>WebRTCを利用したブラウザ型電話サービス</li>
+            <li>九州内限定IP電話・内線通話システム</li>
+            <li>企業・自治体向け音声通信基盤</li>
+            <li>リアルタイム通信技術の研究・開発</li>
+        </ul>
+    </div>
+
+    <h2>会社情報</h2>
+    <div class="card">
+        <p><strong>会社名：</strong>九州通信技術株式会社</p>
+        <p><strong>英語表記：</strong>Kyushu Telecommunications TechnologY</p>
+        <p><strong>略称：</strong>KTTY</p>
+        <p><strong>創業者：</strong>高田 心乃里</p>
+        <p><strong>事業地域：</strong>九州全域</p>
+    </div>
+
+    <h2>サポートセンター</h2>
+    <div class="card">
+        <p>
+            📞 <strong>0968-79-8732</strong><br>
+            <span class="small">受付時間：平日 9:00〜18:00（架空）</span>
+        </p>
+    </div>
+
+    <!-- ★ ここから追加 ★ -->
+    <h2>ご契約方法</h2>
+    <div class="card">
+        <p>
+            九州通信技術株式会社の通信サービスは、
+            Web上から簡単にお申し込みいただけます。
+        </p>
+        <p>
+            <a href="contract.html" style="color:#0055aa; font-weight:bold;">
+                ▶ 契約方法・お申し込みはこちら
+            </a>
+        </p>
+        <p class="small">
+            ※リンク先は契約専用ページです（現在は架空設定）。
+        </p>
+    </div>
+    <!-- ★ 追加ここまで ★ -->
+
+</section>
+
+<footer>
+    <p>© 九州通信技術株式会社 / KTTY</p>
+    <p class="small">本サイトは架空の企業設定に基づいて作成されています。</p>
+</footer>
+
+</body>
+</html>
