@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>電話 - 080-5889-XXXX</title>
+    <title>電話 - 050-5889-XXXX</title>
     <style>
         /* 基本スタイル */
         * { -webkit-tap-highlight-color: transparent; outline: none; box-sizing: border-box; }
@@ -33,7 +33,6 @@
         .active-mode { background: #fff !important; }
         .active-mode svg { fill: #000 !important; }
 
-        /* コントロールボタン */
         .bottom-controls { display: flex; justify-content: center; align-items: center; width: 100%; position: relative; min-height: 85px; margin-bottom: 20px; }
         .btn-call, .btn-hangup { width: 75px; height: 75px; border-radius: 50%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 10; }
         .btn-call { background: #28a745; }
@@ -49,7 +48,7 @@
 
 <div class="phone-container" id="mainContainer">
     <div class="display-area">
-        <div id="my-number-info">番号生成中...</div>
+        <div id="my-number-info">番号取得中...</div>
         <div class="display-number" id="numberDisplay"></div>
         <div class="status" id="status">準備中...</div>
     </div>
@@ -98,7 +97,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
 
 <script>
-    // Firebase設定
     const firebaseConfig = { apiKey: "AIzaSyBaMe4Cz_3W75F5NCtioAguONgukg3-k0g", authDomain: "my-call-14d70.firebaseapp.com", projectId: "my-call-14d70", storageBucket: "my-call-14d70.firebasestorage.app", messagingSenderId: "769393584037", appId: "1:769393584037:web:279aa04477f2649230ea4c" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
@@ -113,14 +111,14 @@
     const remoteAudio = document.getElementById('remoteAudio');
 
     window.onload = async () => {
-        // --- 番号発行ロジックの修正 ---
-        let saved = localStorage.getItem('my_fixed_080_number');
+        // --- 番号発行ロジックを 050-5889-XXXX に修正 ---
+        let saved = localStorage.getItem('my_fixed_050_number');
         
-        // すでに保存されている番号が 080-5889- 形式でない場合も再生成する
-        if (!saved || !saved.startsWith("080-5889-")) {
+        // 050-5889- で始まっていない場合は作り直す
+        if (!saved || !saved.startsWith("050-5889-")) {
             const lastFour = Math.floor(1000 + Math.random() * 9000);
-            saved = "080-5889-" + lastFour;
-            localStorage.setItem('my_fixed_080_number', saved);
+            saved = "050-5889-" + lastFour;
+            localStorage.setItem('my_fixed_050_number', saved);
         }
         
         MY_NUMBER = saved;
@@ -139,7 +137,6 @@
         currentRoomId = roomId;
         unsubscribeRoom = db.collection('rooms').doc(roomId).onSnapshot(snap => {
             if (!snap.exists && pc) {
-                console.log("相手が切断しました");
                 hangup(false); 
             }
         });
