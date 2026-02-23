@@ -7,231 +7,306 @@
     <style>
         /* 基本スタイル */
         * { -webkit-tap-highlight-color: transparent; outline: none; box-sizing: border-box; }
-        body { font-family: -apple-system, sans-serif; background: #ffffff; color: #333; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #ffffff; color: #333; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; transition: background 0.5s; }
         
-        /* 着信専用画面 (フルスクリーン) */
-        #incoming-call-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80') center/cover;
-            display: none; flex-direction: column; align-items: center; justify-content: space-around; z-index: 1000; color: white;
-        }
-        .incoming-number { font-size: 36px; margin-top: 60px; font-weight: 300; }
-        .incoming-sub { font-size: 18px; opacity: 0.9; }
+        #bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80'); background-size: cover; background-position: center; filter: blur(20px) brightness(0.7); transform: scale(1.1); z-index: -1; opacity: 0; transition: opacity 0.8s ease; }
 
-        /* 🌟 スライダー部分のスタイル修正 */
-        .slide-track {
-            position: relative; width: 300px; height: 80px;
-            background: rgba(255,255,255,0.25); border-radius: 40px;
-            backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.3);
-            overflow: hidden; touch-action: none; /* スライド操作を優先 */
-        }
-        .slide-handle {
-            position: absolute; left: 8px; top: 10px;
-            width: 60px; height: 60px; background: white; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3); cursor: grab; z-index: 10;
-        }
-        .slide-handle:active { cursor: grabbing; }
-        .slide-handle svg { fill: #28a745; width: 32px; }
-        .slide-text {
-            position: absolute; width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            padding-left: 50px; font-size: 18px; color: white; pointer-events: none;
-            opacity: 1; transition: opacity 0.2s;
-        }
+        .phone-container { width: 100%; max-width: 400px; height: 100%; max-height: 800px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; padding: 60px 20px 40px; position: relative; }
 
-        /* メインUIスタイルは以前を継承 */
-        .phone-container { width: 350px; height: 650px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; padding: 40px 20px; position: relative; }
-        .display-number { font-size: 32px; font-weight: 300; margin: 0; min-height: 50px; }
-        .status { font-size: 14px; color: #007aff; margin-top: 5px; height: 20px; font-weight: 500; }
-        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
-        .key { width: 75px; height: 75px; background: #f2f2f7; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; }
-        .bottom-controls { display: flex; justify-content: center; align-items: center; min-height: 85px; position: relative; }
-        .btn-call { background: #28a745; width: 75px; height: 75px; border-radius: 50%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; }
-        .btn-hangup { background: #ff3b30; width: 75px; height: 75px; border-radius: 50%; border: none; display: none; justify-content: center; align-items: center; }
-        #my-number-info { font-size: 12px; color: #888; margin-bottom: 10px; }
+        /* 番号表示エリア */
+        .display-number { font-size: 36px; font-weight: 300; margin: 0; min-height: 50px; }
+        .status { font-size: 16px; color: #007aff; margin-top: 8px; font-weight: 500; }
+
+        /* キーパッド */
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px auto; max-width: 280px; }
+        .key { width: 75px; height: 75px; background: #f2f2f7; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; user-select: none; transition: background 0.1s; }
+        .key:active { background: #d1d1d6; }
+        .key .num { font-size: 30px; }
+        .key .abc { font-size: 10px; font-weight: bold; color: #aaa; }
+
+        /* 通話中UI */
+        .in-call-active { color: #fff !important; }
+        .in-call-active .status { color: rgba(255,255,255,0.7) !important; }
+        .in-call-grid { display: none; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-top: 50px; }
+        .circle-btn { width: 70px; height: 70px; border-radius: 50%; display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); margin-bottom: 8px; }
+        .icon-btn { display: flex; flex-direction: column; align-items: center; color: #fff; font-size: 12px; cursor: pointer; }
+        .active-mode { background: #fff !important; }
+        .active-mode svg { fill: #000 !important; }
+
+        /* 下部コントロール */
+        .bottom-controls { display: flex; justify-content: center; align-items: center; min-height: 100px; position: relative; }
+        .btn-call, .btn-hangup { width: 75px; height: 75px; border-radius: 50%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .btn-call { background: #28a745; }
+        .btn-hangup { background: #ff3b30; display: none; }
+        .btn-backspace { position: absolute; right: 20px; background: none; border: none; color: #999; font-size: 24px; cursor: pointer; }
+
+        /* 着信画面（スライド応答） */
+        #incomingUI { display: none; position: absolute; bottom: 50px; left: 0; width: 100%; flex-direction: column; align-items: center; }
+        .slider-track { width: 280px; height: 70px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 35px; position: relative; display: flex; align-items: center; padding: 5px; }
+        .slider-handle { width: 60px; height: 60px; background: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 2; position: absolute; left: 5px; }
+        .slider-text { width: 100%; text-align: center; color: #fff; font-size: 16px; font-weight: 500; animation: pulse 2s infinite; pointer-events: none; }
+        
+        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+        
+        #my-number-info { font-size: 14px; color: #888; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-<div id="incoming-call-screen">
-    <div style="text-align: center;">
-        <div class="incoming-number" id="caller-id-display">050-XXXX-XXXX</div>
-        <div class="incoming-sub">着信中...</div>
-    </div>
-
-    <div class="slide-track" id="slideTrack">
-        <div class="slide-text" id="slideText">スライドで応答</div>
-        <div class="slide-handle" id="slideHandle">
-            <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-        </div>
-    </div>
-</div>
+<div id="bg-overlay"></div>
 
 <div class="phone-container" id="mainContainer">
-    <div>
+    <div class="display-area">
         <div id="my-number-info">読込中...</div>
         <div class="display-number" id="numberDisplay"></div>
-        <div class="status" id="status">待機中</div>
+        <div class="status" id="status">準備中...</div>
     </div>
 
     <div id="dialerUI">
         <div class="keypad">
-            <div class="key" onclick="press('1')"><div class="num">1</div></div>
-            <div class="key" onclick="press('2')"><div class="num">2</div></div>
-            <div class="key" onclick="press('3')"><div class="num">3</div></div>
-            <div class="key" onclick="press('4')"><div class="num">4</div></div>
-            <div class="key" onclick="press('5')"><div class="num">5</div></div>
-            <div class="key" onclick="press('6')"><div class="num">6</div></div>
-            <div class="key" onclick="press('7')"><div class="num">7</div></div>
-            <div class="key" onclick="press('8')"><div class="num">8</div></div>
-            <div class="key" onclick="press('9')"><div class="num">9</div></div>
-            <div class="key" onclick="press('*')"><div class="num">*</div></div>
-            <div class="key" onclick="press('0')"><div class="num">0</div></div>
-            <div class="key" onclick="press('#')"><div class="num">#</div></div>
+            <div class="key" onclick="press('1')"><div class="num">1</div><div class="abc">&nbsp;</div></div>
+            <div class="key" onclick="press('2')"><div class="num">2</div><div class="abc">ABC</div></div>
+            <div class="key" onclick="press('3')"><div class="num">3</div><div class="abc">DEF</div></div>
+            <div class="key" onclick="press('4')"><div class="num">4</div><div class="abc">GHI</div></div>
+            <div class="key" onclick="press('5')"><div class="num">5</div><div class="abc">JKL</div></div>
+            <div class="key" onclick="press('6')"><div class="num">6</div><div class="abc">MNO</div></div>
+            <div class="key" onclick="press('7')"><div class="num">7</div><div class="abc">PQRS</div></div>
+            <div class="key" onclick="press('8')"><div class="num">8</div><div class="abc">TUV</div></div>
+            <div class="key" onclick="press('9')"><div class="num">9</div><div class="abc">WXYZ</div></div>
+            <div class="key" onclick="press('*')"><div class="num">*</div><div class="abc">&nbsp;</div></div>
+            <div class="key" onclick="press('0')"><div class="num">0</div><div class="abc">+</div></div>
+            <div class="key" onclick="press('#')"><div class="num">#</div><div class="abc">&nbsp;</div></div>
+        </div>
+    </div>
+
+    <div class="in-call-grid" id="inCallUI">
+        <div class="icon-btn" onclick="toggleMute()"><div class="circle-btn" id="muteCircle"><svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></div>消音</div>
+        <div class="icon-btn"><div class="circle-btn"><svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4z"/></svg></div>キーパッド</div>
+        <div class="icon-btn" onclick="toggleSpeaker()"><div class="circle-btn" id="speakerCircle"><svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg></div>スピーカー</div>
+    </div>
+
+    <div id="incomingUI">
+        <div class="slider-track" id="sliderTrack">
+            <div class="slider-text">スライドで応答</div>
+            <div class="slider-handle" id="sliderHandle">
+                <svg width="30" height="30" fill="#28a745" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+            </div>
         </div>
     </div>
 
     <div class="bottom-controls">
-        <button class="btn-call" id="callBtn" onclick="startCall()">
+        <button class="btn-call" id="callBtn" onclick="call()">
             <svg width="35" height="35" fill="white" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
         </button>
         <button class="btn-hangup" id="hangupBtn" onclick="hangup()">
             <svg width="35" height="35" fill="white" viewBox="0 0 24 24"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
         </button>
+        <button class="btn-backspace" id="backspaceBtn" onclick="backspace()">⌫</button>
     </div>
-</div>
 
-<audio id="remoteAudio" autoplay></audio>
+    <audio id="remoteAudio" autoplay></audio>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
 
 <script>
+    // Firebase設定 (元の情報を維持)
     const firebaseConfig = { apiKey: "AIzaSyBaMe4Cz_3W75F5NCtioAguONgukg3-k0g", authDomain: "my-call-14d70.firebaseapp.com", projectId: "my-call-14d70", storageBucket: "my-call-14d70.firebasestorage.app", messagingSenderId: "769393584037", appId: "1:769393584037:web:279aa04477f2649230ea4c" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
     let MY_NUMBER = "";
-    let localStream, pc;
-    const handle = document.getElementById('slideHandle');
-    const track = document.getElementById('slideTrack');
+    let localStream, pc, timerInterval;
+    let isIncoming = false;
+
     const display = document.getElementById('numberDisplay');
+    const statusEl = document.getElementById('status');
+    const myNumInfo = document.getElementById('my-number-info');
 
     window.onload = async () => {
+        // 番号発行 050-5889-XXXX
         let saved = localStorage.getItem('my_fixed_050_number');
         if (!saved) {
-            saved = "050-5889-" + Math.floor(1000 + Math.random() * 9000);
+            const lastFour = Math.floor(1000 + Math.random() * 9000);
+            saved = `050-5889-${lastFour}`;
             localStorage.setItem('my_fixed_050_number', saved);
         }
         MY_NUMBER = saved;
-        document.getElementById('my-number-info').innerText = "あなたの固定番号: " + MY_NUMBER;
-        
-        localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        listenIncoming();
-    };
+        myNumInfo.innerText = "自分の番号: " + MY_NUMBER;
 
-    // 🌟 物理的なスライド機能の実装
-    let isDragging = false;
-    let startX = 0;
-    const maxSlide = 220; // 300px(幅) - 60px(ボタン) - 余裕
-
-    const startDrag = (e) => {
-        isDragging = true;
-        startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-        handle.style.transition = "none";
-    };
-
-    const doDrag = (e) => {
-        if (!isDragging) return;
-        const currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-        let delta = currentX - startX;
-        if (delta < 0) delta = 0;
-        if (delta > maxSlide) delta = maxSlide;
-        
-        handle.style.transform = `translateX(${delta}px)`;
-        document.getElementById('slideText').style.opacity = 1 - (delta / maxSlide);
-
-        if (delta >= maxSlide) {
-            isDragging = false;
-            answerCall(); // 🌟 限界までスライドしたら応答
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            statusEl.innerText = "待受中...";
+            listenForCalls();
+        } catch (e) {
+            statusEl.innerText = "マイクの使用を許可してください";
         }
     };
 
-    const stopDrag = () => {
-        if (!isDragging) return;
-        isDragging = false;
-        handle.style.transition = "transform 0.3s ease";
-        handle.style.transform = "translateX(0px)";
-        document.getElementById('slideText').style.opacity = 1;
-    };
-
-    handle.addEventListener('mousedown', startDrag);
-    window.addEventListener('mousemove', doDrag);
-    window.addEventListener('mouseup', stopDrag);
-    handle.addEventListener('touchstart', startDrag);
-    window.addEventListener('touchmove', doDrag);
-    window.addEventListener('touchend', stopDrag);
-
-    // 🌟 通話ロジック（基本）
-    function listenIncoming() {
+    // 着信監視
+    function listenForCalls() {
         db.collection('rooms').doc(MY_NUMBER).onSnapshot(async snap => {
             const data = snap.data();
-            if (data?.offer && !pc) {
-                document.getElementById('caller-id-display').innerText = data.caller || "非通知";
-                document.getElementById('incoming-call-screen').style.display = 'flex';
+            if (data && data.offer && !pc) {
+                showIncomingUI(data.from || "非通知設定");
+            } else if (!data && pc) {
+                hangup(false);
             }
-            if (pc && !pc.currentRemoteDescription && data?.answer) {
-                await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
-            }
-            if (!snap.exists && pc) location.reload();
         });
     }
 
+    function showIncomingUI(callerNumber) {
+        isIncoming = true;
+        display.innerText = callerNumber;
+        statusEl.innerText = "着信中...";
+        document.getElementById('dialerUI').style.display = "none";
+        document.getElementById('callBtn').style.display = "none";
+        document.getElementById('backspaceBtn').style.display = "none";
+        document.getElementById('incomingUI').style.display = "flex";
+        setInCallVisuals(true);
+    }
+
+    // スライダー制御
+    const handle = document.getElementById('sliderHandle');
+    const track = document.getElementById('sliderTrack');
+    let startX = 0;
+
+    handle.addEventListener('touchstart', (e) => startX = e.touches[0].clientX);
+    handle.addEventListener('touchmove', (e) => {
+        let delta = e.touches[0].clientX - startX;
+        if (delta < 0) delta = 0;
+        if (delta > 210) delta = 210; 
+        handle.style.transform = `translateX(${delta}px)`;
+        if (delta >= 200) answerCall();
+    });
+    handle.addEventListener('touchend', () => {
+        handle.style.transform = `translateX(0px)`;
+    });
+
     async function answerCall() {
-        document.getElementById('incoming-call-screen').style.display = 'none';
+        document.getElementById('incomingUI').style.display = "none";
+        document.getElementById('hangupBtn').style.display = "flex";
+        document.getElementById('inCallUI').style.display = "grid";
+        
         const roomRef = db.collection('rooms').doc(MY_NUMBER);
-        const data = (await roomRef.get()).data();
-        createPC(roomRef, 'callee');
+        const snap = await roomRef.get();
+        const data = snap.data();
+
+        createPC();
+        pc.onicecandidate = e => e.candidate && roomRef.collection('calleeCandidates').add(e.candidate.toJSON());
         await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
         await roomRef.update({ answer: { type: answer.type, sdp: answer.sdp } });
-        uiInCall();
-    }
 
-    async function startCall() {
-        const target = display.innerText;
-        if (!target) return;
-        const roomRef = db.collection('rooms').doc(target);
-        createPC(roomRef, 'caller');
-        const offer = await pc.createOffer();
-        await pc.setLocalDescription(offer);
-        await roomRef.set({ offer: { type: offer.type, sdp: offer.sdp }, caller: MY_NUMBER });
-        uiInCall();
-    }
-
-    function createPC(roomRef, role) {
-        pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-        localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
-        pc.ontrack = e => document.getElementById('remoteAudio').srcObject = e.streams[0];
-        
-        const candCol = role === 'caller' ? 'calleeCandidates' : 'callerCandidates';
-        const myCol = role === 'caller' ? 'callerCandidates' : 'calleeCandidates';
-        
-        pc.onicecandidate = e => e.candidate && roomRef.collection(myCol).add(e.candidate.toJSON());
-        roomRef.collection(candCol).onSnapshot(snap => {
-            snap.docChanges().forEach(change => { if(change.type==='added') pc.addIceCandidate(new RTCIceCandidate(change.doc.data())); });
+        roomRef.collection('callerCandidates').onSnapshot(snap => {
+            snap.docChanges().forEach(change => {
+                if (change.type === 'added') pc.addIceCandidate(new RTCIceCandidate(change.doc.data()));
+            });
         });
     }
 
-    function press(n) { display.innerText += n; }
-    function hangup() { location.reload(); }
-    function uiInCall() {
+    async function call() {
+        const targetId = display.innerText;
+        if (!targetId) return;
+        
+        statusEl.innerText = "発信中...";
+        const roomRef = db.collection('rooms').doc(targetId);
+        
+        createPC();
+        pc.onicecandidate = e => e.candidate && roomRef.collection('callerCandidates').add(e.candidate.toJSON());
+        
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        await roomRef.set({ 
+            offer: { type: offer.type, sdp: offer.sdp },
+            from: MY_NUMBER
+        });
+
+        roomRef.onSnapshot(async snap => {
+            const data = snap.data();
+            if (data?.answer && !pc.currentRemoteDescription) {
+                await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+            }
+        });
+
+        roomRef.collection('calleeCandidates').onSnapshot(snap => {
+            snap.docChanges().forEach(change => {
+                if (change.type === 'added') pc.addIceCandidate(new RTCIceCandidate(change.doc.data()));
+            });
+        });
+
         document.getElementById('dialerUI').style.display = "none";
         document.getElementById('callBtn').style.display = "none";
         document.getElementById('hangupBtn').style.display = "flex";
-        document.getElementById('status').innerText = "通話中";
+        document.getElementById('inCallUI').style.display = "grid";
+        setInCallVisuals(true);
+    }
+
+    function createPC() {
+        pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+        pc.ontrack = e => { document.getElementById('remoteAudio').srcObject = e.streams[0]; };
+        if (localStream) localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+        pc.onconnectionstatechange = () => {
+            if (pc.connectionState === 'connected') startTimer();
+        };
+    }
+
+    async function hangup(cleanDb = true) {
+        if (cleanDb) {
+            // 自分の番号の部屋、または入力した番号の部屋を削除
+            await db.collection('rooms').doc(MY_NUMBER).delete();
+            const targetId = display.innerText;
+            if (targetId) await db.collection('rooms').doc(targetId).delete();
+        }
+        location.reload();
+    }
+
+    function press(num) {
+        let current = display.innerText.replace(/-/g, "");
+        if (current.length >= 11) return;
+        current += num;
+        // 050-XXXX-XXXX 形式でフォーマット
+        let formatted = current;
+        if (current.length > 3 && current.length <= 7) formatted = current.slice(0, 3) + "-" + current.slice(3);
+        else if (current.length > 7) formatted = current.slice(0, 3) + "-" + current.slice(3, 7) + "-" + current.slice(7);
+        display.innerText = formatted;
+    }
+
+    function backspace() {
+        let current = display.innerText.replace(/-/g, "").slice(0, -1);
+        display.innerText = "";
+        for(let n of current) press(n);
+    }
+
+    function setInCallVisuals(isActive) {
+        const overlay = document.getElementById('bg-overlay');
+        if (isActive) {
+            overlay.style.opacity = "1";
+            document.getElementById('mainContainer').classList.add('in-call-active');
+            document.body.style.background = "#000";
+        }
+    }
+
+    function startTimer() {
+        let sec = 0;
+        timerInterval = setInterval(() => {
+            sec++;
+            const m = String(Math.floor(sec / 60)).padStart(2, '0');
+            const s = String(sec % 60).padStart(2, '0');
+            statusEl.innerText = `通話中 ${m}:${s}`;
+        }, 1000);
+    }
+
+    function toggleMute() {
+        const track = localStream.getAudioTracks()[0];
+        track.enabled = !track.enabled;
+        document.getElementById('muteCircle').classList.toggle('active-mode');
+    }
+
+    function toggleSpeaker() {
+        document.getElementById('speakerCircle').classList.toggle('active-mode');
     }
 </script>
 </body>
