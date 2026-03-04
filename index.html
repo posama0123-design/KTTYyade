@@ -2,195 +2,150 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>九州通信技術株式会社 | KTTY</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <title>Edit or Game? - IP-callservice</title>
     <style>
         body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
             margin: 0;
-            font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
-            background: #f4f6f8;
-            color: #222;
+            background-color: #f0f2f5;
         }
 
-        header {
-            background: linear-gradient(135deg, #003366, #0055aa);
-            color: white;
-            padding: 30px 20px;
+        .container {
+            text-align: center;
         }
 
-        /* ===== ロゴ＋タイトル（KDDI風） ===== */
-        .header-inner {
-            max-width: 1200px;
-            margin: auto;
+        /* ルーレットの外枠 */
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin-bottom: 30px;
+        }
+
+        /* 矢印 */
+        .arrow {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid #ff4757;
+            z-index: 10;
+        }
+
+        /* 円盤本体 */
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid #333;
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);
+            background: conic-gradient(
+                #3498db 0deg 180deg, 
+                #2ecc71 180deg 360deg
+            );
+        }
+
+        /* ラベルの配置 */
+        .label {
+            position: absolute;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
-        }
-
-        .logo {
-            width: 120px;
-            height: auto;
-            margin-right: 20px;
-            flex-shrink: 0;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 32px;
-            letter-spacing: 1px;
-        }
-
-        header p {
-            margin-top: 8px;
-            opacity: 0.9;
-        }
-
-        nav {
-            background: #ffffff;
-            border-bottom: 1px solid #ddd;
-            padding: 10px 20px;
-        }
-
-        nav a {
-            margin-right: 20px;
-            text-decoration: none;
-            color: #0055aa;
+            justify-content: center;
             font-weight: bold;
-        }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-
-        section {
-            padding: 40px 20px;
-            max-width: 1000px;
-            margin: auto;
-        }
-
-        h2 {
-            color: #003366;
-            border-left: 6px solid #0055aa;
-            padding-left: 10px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        footer {
-            background: #002244;
             color: white;
-            padding: 30px 20px;
-            text-align: center;
-            font-size: 14px;
+            font-size: 24px;
         }
 
-        .small {
-            font-size: 13px;
-            opacity: 0.85;
+        .label-edit { transform: rotate(90deg) translateY(-70px); }
+        .label-game { transform: rotate(270deg) translateY(-70px); }
+
+        button {
+            padding: 12px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: 0.2s;
         }
 
-        /* スマホ微調整 */
-        @media (max-width: 600px) {
-            .logo {
-                width: 90px;
-                margin-right: 14px;
-            }
-            header h1 {
-                font-size: 24px;
-            }
+        button:hover { background-color: #555; }
+        button:disabled { background-color: #ccc; }
+
+        #result {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            min-height: 1.2em;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="header-inner">
-        <img src="KTTY_transparent_transparent.png" alt="KTTY ロゴ" class="logo">
-        <div>
-            <h1>九州通信技術株式会社</h1>
-            <p>Kyushu Telecommunications TechnologY（KTTY）</p>
+<div class="container">
+    <h1>運命の選択</h1>
+    <div class="wheel-container">
+        <div class="arrow"></div>
+        <div id="wheel" class="wheel">
+            <div class="label label-edit">編集 (Edit)</div>
+            <div id="game-label" class="label label-game">ゲーム (Game)</div>
         </div>
     </div>
-</header>
+    <button id="spin-btn">ルーレットを回す！</button>
+    <div id="result"></div>
+</div>
 
-<nav>
-    <a href="index.html">トップ</a>
-    <a href="service.html">事業内容</a>
-    <a href="tech.html">技術情報</a>
-    <a href="company.html">会社概要</a>
-    <a href="contact.html">お問い合わせ</a>
-</nav>
+<script>
+    const wheel = document.getElementById('wheel');
+    const btn = document.getElementById('spin-btn');
+    const resultDiv = document.getElementById('result');
 
-<section>
-    <h2>ご挨拶</h2>
-    <div class="card">
-        <p>
-            九州通信技術株式会社は、九州地域に特化した通信技術企業として、
-            WebRTCを中心としたリアルタイム音声通信サービスを提供しています。
-        </p>
-        <p>
-            地域に根ざした通信インフラの構築を通じて、
-            人と人、企業と社会をより自然につなぐことを目指しています。
-        </p>
-    </div>
+    let currentRotation = 0;
 
-    <h2>主な事業</h2>
-    <div class="card">
-        <ul>
-            <li>WebRTCを利用したブラウザ型電話サービス</li>
-            <li>九州内限定IP電話・内線通話システム</li>
-            <li>企業・自治体向け音声通信基盤</li>
-            <li>リアルタイム通信技術の研究・開発</li>
-        </ul>
-    </div>
+    btn.addEventListener('click', () => {
+        btn.disabled = true;
+        resultDiv.textContent = "運命を選んでいます...";
 
-    <h2>会社情報</h2>
-    <div class="card">
-        <p><strong>会社名：</strong>九州通信技術株式会社</p>
-        <p><strong>英語表記：</strong>Kyushu Telecommunications TechnologY</p>
-        <p><strong>略称：</strong>KTTY</p>
-        <p><strong>創業者：</strong>高田 心乃里</p>
-        <p><strong>事業地域：</strong>九州全域</p>
-    </div>
+        // 5回転(1800度)以上回して勢いを出す
+        const extraDegree = Math.floor(Math.random() * 360);
+        currentRotation += 1800 + extraDegree;
+        
+        wheel.style.transform = `rotate(${currentRotation}deg)`;
 
-    <h2>サポートセンター</h2>
-    <div class="card">
-        <p>
-            📞 <strong>0968-79-8732</strong><br>
-            <span class="small">受付時間：平日 9:00〜18:00（架空）</span>
-        </p>
-    </div>
-
-    <!-- ★ ここから追加 ★ -->
-    <h2>ご契約方法</h2>
-    <div class="card">
-        <p>
-            九州通信技術株式会社の通信サービスは、
-            Web上から簡単にお申し込みいただけます。
-        </p>
-        <p>
-            <a href="contract.html" style="color:#0055aa; font-weight:bold;">
-                ▶ 契約方法・お申し込みはこちら
-            </a>
-        </p>
-        <p class="small">
-            ※リンク先は契約専用ページです（現在は架空設定）。
-        </p>
-    </div>
-    <!-- ★ 追加ここまで ★ -->
-
-</section>
-
-<footer>
-    <p>© 九州通信技術株式会社 / KTTY</p>
-    <p class="small">本サイトは架空の企業設定に基づいて作成されています。</p>
-</footer>
+        // アニメーション終了後に判定（4秒）
+        setTimeout(() => {
+            btn.disabled = false;
+            
+            // 現在の角度からどちらが上（270度付近）にあるか判定
+            const finalDegree = currentRotation % 360;
+            
+            // 0-180が「ゲーム」、180-360が「編集」の設定（CSSのグラデ準拠）
+            // ※矢印の位置や回転方向で微調整が必要ですが、直感的な判定にします
+            if (finalDegree <= 180) {
+                resultDiv.textContent = "結果：🎮 ゲームしましょう！";
+                resultDiv.style.color = "#2ecc71";
+            } else {
+                resultDiv.textContent = "結果：💻 編集（仕事）の時間です！";
+                resultDiv.style.color = "#3498db";
+            }
+        }, 4000);
+    });
+</script>
 
 </body>
 </html>
